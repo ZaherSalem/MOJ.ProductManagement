@@ -16,4 +16,8 @@
     <Folder Include="ValueObjects\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\MOJ.ProductManagement.Infrastructure\MOJ.ProductManagement.Infrastructure.csproj" />
+  </ItemGroup>
+
 </Project>
