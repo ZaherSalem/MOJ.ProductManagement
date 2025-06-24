@@ -8,7 +8,6 @@
 
   <ItemGroup>
     <Folder Include="DTOs\" />
-    <Folder Include="Extensions\" />
     <Folder Include="Features\Products\Commands\" />
     <Folder Include="Features\Products\Queries\" />
     <Folder Include="Features\Suppliers\Commands\" />
