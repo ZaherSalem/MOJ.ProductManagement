@@ -26,7 +26,7 @@ namespace MOJ.ProductManagement.Test.Controllers
         [Fact]
         public async Task CreateProduct_ReturnsOk_WhenSucceeded()
         {
-            var dto = new CreateProductDto { Name = "Test", quantityPerUnitId = (int)QuantityPerUnit.Liter, ReorderLevel = 1, SupplierId = Guid.NewGuid(), UnitPrice = 10, UnitsInStock = 5, UnitsOnOrder = 2 };
+            var dto = new CreateProductDto { Name = "Test", QuantityPerUnitId = (int)QuantityPerUnit.Liter, ReorderLevel = 1, SupplierId = 1, UnitPrice = 10, UnitsInStock = 5, UnitsOnOrder = 2 };
             var result = Result<ProductDto>.Success(new ProductDto { Id = 1, Name = "Test" });
             _mediatorMock.Setup(m => m.Send(It.IsAny<CreateProductCommand>(), It.IsAny<CancellationToken>())).ReturnsAsync(result);
 
@@ -38,7 +38,7 @@ namespace MOJ.ProductManagement.Test.Controllers
         [Fact]
         public async Task CreateProduct_ReturnsBadRequest_WhenFailed()
         {
-            var dto = new CreateProductDto { Name = "Test", quantityPerUnitId = (int)QuantityPerUnit.Kilo, ReorderLevel = 1, SupplierId = Guid.NewGuid(), UnitPrice = 10, UnitsInStock = 5, UnitsOnOrder = 2 };
+            var dto = new CreateProductDto { Name = "Test", QuantityPerUnitId = (int)QuantityPerUnit.Kilo, ReorderLevel = 1, SupplierId = 1, UnitPrice = 10, UnitsInStock = 5, UnitsOnOrder = 2 };
             var result = Result<ProductDto>.Failure("Error");
             _mediatorMock.Setup(m => m.Send(It.IsAny<CreateProductCommand>(), It.IsAny<CancellationToken>())).ReturnsAsync(result);
 
@@ -50,7 +50,7 @@ namespace MOJ.ProductManagement.Test.Controllers
         [Fact]
         public async Task UpdateProduct_ReturnsOk_WhenSucceeded()
         {
-            var dto = new UpdateProductDto { Id = 1, Name = "Test", quantityPerUnitId = (int)QuantityPerUnit.Kilo, ReorderLevel = 1, SupplierId = 1, UnitPrice = 10, UnitsInStock = 5, UnitsOnOrder = 2 };
+            var dto = new UpdateProductDto { Id = 1, Name = "Test", QuantityPerUnitId = (int)QuantityPerUnit.Kilo, ReorderLevel = 1, SupplierId = 1, UnitPrice = 10, UnitsInStock = 5, UnitsOnOrder = 2 };
             var result = Result<ProductDto>.Success(new ProductDto { Id = dto.Id, Name = "Test" });
             _mediatorMock.Setup(m => m.Send(It.IsAny<UpdateProductCommand>(), It.IsAny<CancellationToken>())).ReturnsAsync(result);
 
@@ -67,7 +67,7 @@ namespace MOJ.ProductManagement.Test.Controllers
             {
                 Id = 1,
                 Name = "Test",
-                quantityPerUnitId = (int)QuantityPerUnit.Liter,
+                QuantityPerUnitId = (int)QuantityPerUnit.Liter,
                 ReorderLevel = 1,
                 SupplierId = 1,
                 UnitPrice = 10,

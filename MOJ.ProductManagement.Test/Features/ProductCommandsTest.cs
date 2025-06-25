@@ -16,7 +16,7 @@ public class ProductCommandsTest
         var mapper = new Mock<IMapper>();
         var unitOfWork = new Mock<IUnitOfWork>();
         var repo = new Mock<IRepository<Product>>();
-        var dto = new CreateProductDto { Name = "Test Product", quantityPerUnitId = 0, ReorderLevel = 1, SupplierId = Guid.NewGuid(), UnitPrice = 10, UnitsInStock = 5, UnitsOnOrder = 2 };
+        var dto = new CreateProductDto { Name = "Test Product", QuantityPerUnitId = 0, ReorderLevel = 1, SupplierId = 1, UnitPrice = 10, UnitsInStock = 5, UnitsOnOrder = 2 };
         var product = new Product();
         var productDto = new ProductDto { Id = 1, Name = dto.Name };
 
@@ -41,7 +41,7 @@ public class ProductCommandsTest
         var repo = new Mock<IRepository<Product>>();
         var id = 1;
         var product = new Product();
-        var dto = new UpdateProductDto { Id = id, Name = "Updated Product", quantityPerUnitId = 0, ReorderLevel = 1, SupplierId = 1, UnitPrice = 10, UnitsInStock = 5, UnitsOnOrder = 2 };
+        var dto = new UpdateProductDto { Id = id, Name = "Updated Product", QuantityPerUnitId = 0, ReorderLevel = 1, SupplierId = 1, UnitPrice = 10, UnitsInStock = 5, UnitsOnOrder = 2 };
         var updatedProduct = new Product();
         var productDto = new ProductDto { Id = id, Name = dto.Name };
 
@@ -66,7 +66,7 @@ public class ProductCommandsTest
         var unitOfWork = new Mock<IUnitOfWork>();
         var repo = new Mock<IRepository<Product>>();
         var id = 1;
-        var dto = new UpdateProductDto { Id = id, Name = "Updated Product", quantityPerUnitId = 0, ReorderLevel = 1, SupplierId = 1, UnitPrice = 10, UnitsInStock = 5, UnitsOnOrder = 2 };
+        var dto = new UpdateProductDto { Id = id, Name = "Updated Product", QuantityPerUnitId = 0, ReorderLevel = 1, SupplierId = 1, UnitPrice = 10, UnitsInStock = 5, UnitsOnOrder = 2 };
 
         unitOfWork.Setup(u => u.GetRepository<Product>()).Returns(repo.Object);
         repo.Setup(r => r.GetByIdAsync(id)).ReturnsAsync((Product)null);
