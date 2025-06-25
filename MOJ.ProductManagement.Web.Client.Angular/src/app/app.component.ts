@@ -18,9 +18,8 @@ export class AppComponent {
 
   title = 'Product Management';
   navItems = [
-    { label: 'Statistics', icon: 'pi pi-home', routerLink: '/dashboard' },
+    { label: 'Statistics', icon: 'pi pi-home', routerLink: '/statistics' },
     { label: 'Products', icon: 'pi pi-box', routerLink: '/products' },
     { label: 'Suppliers', icon: 'pi pi-users', routerLink: '/suppliers' },
-
   ];
 }

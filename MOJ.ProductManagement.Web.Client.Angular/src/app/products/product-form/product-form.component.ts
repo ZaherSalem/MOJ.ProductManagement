@@ -26,6 +26,7 @@ export class ProductFormComponent {
   @Output() save = new EventEmitter<void>();
   @Output() cancel = new EventEmitter<void>();
 
+  
   saveProduct() {
     this.save.emit();
   }

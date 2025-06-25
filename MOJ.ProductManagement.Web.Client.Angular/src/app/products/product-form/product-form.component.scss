@@ -1,0 +1,70 @@
+.custom-form {
+  background: linear-gradient(135deg, #f8fafc 0%, #e0e7ff 100%);
+  border-radius: 18px;
+  box-shadow: 0 6px 32px rgba(60, 72, 88, 0.12);
+  padding: 2.5rem 2rem 2rem 2rem;
+  max-width: 520px;
+  margin: 2rem auto;
+  border: 1px solid #e0e7ff;
+}
+
+.custom-form .p-field {
+  margin-bottom: 1.5rem;
+}
+
+.custom-form label {
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 0.5rem;
+  display: block;
+  letter-spacing: 0.02em;
+}
+
+.custom-form input,
+.custom-form .p-inputnumber,
+.custom-form .p-dropdown {
+  width: 100%;
+  border-radius: 8px;
+  border: 1px solid #c7d2fe;
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  background: #fff;
+  transition: border-color 0.2s;
+}
+
+.custom-form input:focus,
+.custom-form .p-inputnumber:focus-within,
+.custom-form .p-dropdown.p-focus {
+  border-color: #6366f1;
+  box-shadow: 0 0 0 2px #a5b4fc;
+}
+
+.p-dialog-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.p-dialog-footer button {
+  min-width: 110px;
+  font-size: 1rem;
+  border-radius: 6px;
+  padding: 0.7rem 1.2rem;
+  box-shadow: 0 2px 8px rgba(99, 102, 241, 0.08);
+}
+
+.p-dialog-footer .p-button-text {
+  background: transparent;
+  color: #6366f1;
+  border: none;
+}
+
+.p-dialog-footer .p-button-text:hover {
+  background: #eef2ff;
+}
+
+.p-dialog-footer .p-button[disabled] {
+  opacity: 0.6;
+  cursor: not-allowed;
+}

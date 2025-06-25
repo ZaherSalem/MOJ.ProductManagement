@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import { ApiService } from '../../core/services/api.service';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
@@ -14,11 +13,17 @@ import { ToastModule } from 'primeng/toast';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { CardModule } from 'primeng/card';
 import { trigger } from '@angular/animations';
-import { eQuantityPerUnit } from '../../../Enums/eQuantityPerUnit';
-import { CreateProductDto } from '../../models/CreateProductDto';
-import { ProductDto } from '../../models/ProductDto';
-import { UpdateProductDto } from '../../models/UpdateProductDto';
 import { ProductFormComponent } from '../product-form/product-form.component';
+import { ProductService } from '../../core/services/ProductService';
+import {
+  ICreateProductDto,
+  IPaginatedRequest,
+  IProductDto,
+  IUpdateProductDto,
+} from '../../core/generated/Interfaces';
+import { SupplierService } from '../../core/services/SupplierService';
+import { QuantityPerUnit } from '../../core/generated/generated-enums';
+import { RippleModule } from 'primeng/ripple';
 
 @Component({
   selector: 'app-product-list',
@@ -29,6 +34,7 @@ import { ProductFormComponent } from '../product-form/product-form.component';
     RouterModule,
     TableModule,
     ButtonModule,
+    RippleModule,
     DialogModule,
     InputTextModule,
     DropdownModule,
@@ -36,7 +42,7 @@ import { ProductFormComponent } from '../product-form/product-form.component';
     ToastModule,
     ConfirmDialogModule,
     CardModule,
-    ProductFormComponent
+    ProductFormComponent,
   ],
   templateUrl: './product-list.component.html',
   providers: [ConfirmationService, MessageService],
@@ -44,16 +50,16 @@ import { ProductFormComponent } from '../product-form/product-form.component';
     // Define your animations here if using @animation.start
     trigger('animation', [
       // animation states and transitions
-    ])
-  ]
+    ]),
+  ],
 })
 export class ProductListComponent implements OnInit {
   products: any[] = [];
   loading = true;
   displayDialog = false;
-  selectedProduct: ProductDto = {} as ProductDto;
+  selectedProduct: IProductDto = {} as IProductDto;
   suppliers: any[] = [];
-  quantityOptions = Object.entries(eQuantityPerUnit)
+  quantityOptions = Object.entries(QuantityPerUnit)
     .filter(([key, value]) => isNaN(Number(key)))
     .map(([key, value]) => ({ label: key, value }));
 
@@ -65,16 +71,17 @@ export class ProductListComponent implements OnInit {
     { label: 'On Order', field: 'unitsOnOrder' },
     { label: 'Reorder Level', field: 'reorderLevel' },
     { label: 'Supplier', field: 'supplierName' },
-    { label: 'Actions', field: 'actions' }
+    { label: 'Actions', field: 'actions' },
   ];
 
   searchTerm: string = '';
 
   constructor(
-    private apiService: ApiService,
+    private productApiService: ProductService,
+    private supplierApiService: SupplierService,
     private messageService: MessageService,
     private confirmationService: ConfirmationService
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     this.loadProducts();
@@ -83,7 +90,13 @@ export class ProductListComponent implements OnInit {
 
   loadProducts(): void {
     this.loading = true;
-    this.apiService.getProducts().subscribe({
+    // Provide default pagination parameters
+    const paginatedRequest: IPaginatedRequest = {
+      PageNumber: 1,
+      PageSize: 20,
+      SearchValue: '',
+    };
+    this.productApiService.getProducts(paginatedRequest).subscribe({
       next: (data: any) => {
         this.products = data.data;
         this.loading = false;
@@ -92,18 +105,23 @@ export class ProductListComponent implements OnInit {
         this.messageService.add({
           severity: 'error',
           summary: 'Error',
-          detail: 'Failed to load products'
+          detail: 'Failed to load products',
         });
         this.loading = false;
-      }
+      },
     });
   }
 
   loadSuppliers(): void {
-    this.apiService.getSuppliers().subscribe({
+    const paginatedRequest: IPaginatedRequest = {
+      PageNumber: 1,
+      PageSize: 10,
+      SearchValue: '',
+    };
+    this.supplierApiService.getSuppliers(paginatedRequest).subscribe({
       next: (data: any) => {
         this.suppliers = data.data;
-      }
+      },
     });
   }
 
@@ -111,29 +129,31 @@ export class ProductListComponent implements OnInit {
     this.selectedProduct = product ? { ...product } : {};
     // if(product) {
     //   this.selectedProduct.QuantityPerUnitId = product.quantityPerUnitName;
-    // } 
+    // }
     this.displayDialog = true;
   }
 
   saveProduct(): void {
-    
-      // Exclude quantityPerUnitName from the DTO
-      const { quantityPerUnitName,supplierName, ...rest } = this.selectedProduct;
-      const dto: any = this.selectedProduct.id == null
-        ? { ...rest } as CreateProductDto
-        : { ...rest } as UpdateProductDto;
-      
+    // Exclude quantityPerUnitName from the DTO
+    const { QuantityPerUnitName, SupplierName, ...rest } = this.selectedProduct;
+    const dto: any =
+      this.selectedProduct.Id == null
+        ? ({ ...rest } as ICreateProductDto)
+        : ({ ...rest } as IUpdateProductDto);
 
-    const operation= this.selectedProduct.id == null?
-      this.apiService.createProduct(dto): 
-      this.apiService.updateProduct(this.selectedProduct.id, dto)
+    const operation =
+      this.selectedProduct.Id == null
+        ? this.productApiService.createProduct(dto)
+        : this.productApiService.updateProduct(this.selectedProduct.Id, dto);
 
     operation.subscribe({
       next: () => {
         this.messageService.add({
           severity: 'success',
           summary: 'Success',
-          detail: `Product ${this.selectedProduct.id ? 'updated' : 'created'} successfully`
+          detail: `Product ${
+            this.selectedProduct.Id ? 'updated' : 'created'
+          } successfully`,
         });
         this.displayDialog = false;
         this.loadProducts();
@@ -142,9 +162,11 @@ export class ProductListComponent implements OnInit {
         this.messageService.add({
           severity: 'error',
           summary: 'Error',
-          detail: `Failed to ${this.selectedProduct.id ? 'update' : 'create'} product`
+          detail: `Failed to ${
+            this.selectedProduct.Id ? 'update' : 'create'
+          } product`,
         });
-      }
+      },
     });
   }
 
@@ -154,12 +176,12 @@ export class ProductListComponent implements OnInit {
       header: 'Confirm',
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
-        this.apiService.deleteProduct(product.id).subscribe({
+        this.productApiService.deleteProduct(product.id).subscribe({
           next: () => {
             this.messageService.add({
               severity: 'success',
               summary: 'Success',
-              detail: 'Product deleted successfully'
+              detail: 'Product deleted successfully',
             });
             this.loadProducts();
           },
@@ -167,11 +189,11 @@ export class ProductListComponent implements OnInit {
             this.messageService.add({
               severity: 'error',
               summary: 'Error',
-              detail: 'Failed to delete product'
+              detail: 'Failed to delete product',
             });
-          }
+          },
         });
-      }
+      },
     });
   }
 
@@ -182,4 +204,3 @@ export class ProductListComponent implements OnInit {
     // );
   }
 }
-

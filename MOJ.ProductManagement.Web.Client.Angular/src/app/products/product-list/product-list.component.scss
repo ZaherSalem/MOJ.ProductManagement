@@ -1,0 +1,62 @@
+.main-container {
+  background: #f8f9fa;
+  min-height: 100vh;
+}
+.fantastic-grid-wrapper {
+  border-radius: 16px;
+  box-shadow: 0 4px 24px 0 rgba(44, 62, 80, 0.08);
+  background: #fff;
+  overflow-x: auto;
+  padding: 0;
+  margin-bottom: 2rem;
+}
+.p-table {
+  min-width: 900px;
+  border-radius: 12px;
+  overflow: hidden;
+}
+.p-datatable-striped tbody tr:nth-child(even) {
+  background: #f6fafd;
+}
+.product-table-row {
+  transition: background 0.2s, box-shadow 0.2s;
+}
+.product-table-row:hover {
+  background: #eaf4fb !important;
+  box-shadow: 0 2px 8px 0 rgba(44, 62, 80, 0.06);
+}
+.fantastic-header th {
+  background: #e3eaf3 !important;
+  color: #34495e;
+  font-weight: 600;
+  border-bottom: 2px solid #d1dbe6;
+  padding: 1rem 0.75rem;
+  text-align: left;
+}
+.fantastic-cell {
+  padding: 0.75rem;
+  vertical-align: middle;
+  border-bottom: 1px solid #f0f0f0;
+}
+.action-btns {
+  display: flex;
+  gap: 0.5rem;
+  position: sticky;
+  right: 0;
+  background: #fff;
+  z-index: 2;
+  border-left: 1px solid #f0f0f0;
+  padding-left: 0.75rem;
+}
+.action-btns button {
+  transition: box-shadow 0.2s, transform 0.2s;
+}
+.action-btns button:hover {
+  box-shadow: 0 2px 8px 0 rgba(44, 62, 80, 0.12);
+  transform: scale(1.08);
+}
+@media (max-width: 1000px) {
+  .p-table {
+    min-width: 600px;
+  }
+}

@@ -1,10 +1,14 @@
 <p-toast></p-toast>
 
-<p-menubar [model]="navItems" [style]="{'margin-bottom': '20px'}">
-  <ng-template pTemplate="start">
-    <span class="text-xl font-bold">{{title}}</span>
-  </ng-template>
-</p-menubar>
+<div class="container px-5">
+  <p-menubar [model]="navItems" class="main-menubar">
+    <ng-template pTemplate="start">
+      <span class="app-title">
+        {{ title }}
+      </span>
+    </ng-template>
+  </p-menubar>
+</div>
 
 <div class="container">
   <router-outlet></router-outlet>

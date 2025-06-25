@@ -1,0 +1,225 @@
+<div class="statistics-container py-4 px-3 bg-light rounded shadow-sm">
+  <div class="header d-flex align-items-center justify-content-between mb-4">
+    <div>
+      <h2 class="mb-1 fw-bold text-primary">Products Statistics</h2>
+      <span class="text-muted small">Overview of current inventory status</span>
+    </div>
+    <div class="d-flex align-items-center gap-2">
+      <button
+        pButton
+        type="button"
+        icon="pi pi-refresh"
+        label="Refresh"
+        class="ripple-box bg-white border rounded px-3 py-1 text-secondary small"
+        (click)="refresh()"
+        [disabled]="loading"
+        pTooltip="Reload statistics"
+        tooltipPosition="left"
+      ></button>
+    </div>
+  </div>
+
+  <p-progressBar
+    *ngIf="loading"
+    mode="indeterminate"
+    styleClass="mb-3"
+  ></p-progressBar>
+
+  <p-messages
+    *ngIf="error"
+    [value]="[{ severity: 'error', summary: 'Error', detail: error }]"
+    styleClass="mb-3"
+  ></p-messages>
+
+  <ng-container *ngIf="stats$ | async as statsResult">
+    <div *ngIf="statsResult.data as stats" class="stats-grid">
+      <!-- Products needing reorder -->
+      <div class="d-flex flex-column stats-summary-section gap-4">
+        <div class="row g-4 mb-4">
+          <!-- Largest supplier -->
+          <div class="col-12 col-md-6">
+            <p-card
+              class="stat-card mb-4 shadow border-0"
+              header="Largest supplier of store"
+              subheader="By number of products supplied"
+            >
+              <div
+                *ngIf="stats.largestSupplier; else noSupplierData"
+                class="supplier-info py-2 px-3"
+              >
+                <p class="mb-2 fs-5">
+                  <span class="text-muted">Supplier:</span>
+                  <strong class="text-primary">{{
+                    stats.largestSupplier.name
+                  }}</strong>
+                </p>
+                <p class="mb-0">
+                  <span class="text-muted">Products Supplied:</span>
+                  <span class="badge bg-success fs-6 ms-2">
+                    {{ stats.largestSupplier.productCount || 0 }}
+                  </span>
+                </p>
+              </div>
+              <ng-template #noSupplierData>
+                <p-messages
+                  severity="info"
+                  text="No supplier data available"
+                  styleClass="mt-2"
+                ></p-messages>
+              </ng-template>
+            </p-card>
+          </div>
+
+          <!-- Products with minimum orders -->
+          <div class="col-12 col-md-6">
+            <p-card
+              class="stat-card shadow border-0"
+              header="The product with minimum orders"
+              subheader="To stop order it from suppliers"
+            >
+              <div *ngIf="stats.productWithMinimumOrders; else noLeastOrdered">
+                <div class="least-ordered-product px-2 py-1">
+                  <p class="mb-1">
+                    <span class="text-muted me-1">#:</span>
+                    <strong class="text-danger">{{
+                      stats.productWithMinimumOrders.id
+                    }}</strong>
+                    &nbsp;|&nbsp; <span class="text-muted me-1">Product:</span>
+                    <strong>{{ stats.productWithMinimumOrders.name }}</strong>
+                    &nbsp;|&nbsp; <span class="text-muted me-1">Supplier:</span>
+                    <strong>{{
+                      stats.productWithMinimumOrders.supplierName
+                    }}</strong>
+                  </p>
+                  <p class="mb-1">
+                    <span class="text-muted me-1">Quantity/Unit:</span>
+                    <strong>{{
+                      stats.productWithMinimumOrders.quantityPerUnitName
+                    }}</strong>
+                    &nbsp;|&nbsp;
+                    <span class="text-muted me-1">Units In Stock:</span>
+                    <strong class="text-danger">{{
+                      stats.productWithMinimumOrders.unitsInStock || 0
+                    }}</strong>
+                    &nbsp;|&nbsp;
+                    <span class="text-muted me-1">Units On Order:</span>
+                    <strong>{{
+                      stats.productWithMinimumOrders.unitsOnOrder || 0
+                    }}</strong>
+                  </p>
+                  <p class="mb-0">
+                    <span class="text-muted me-1">Last Ordered:</span>
+                    <strong>
+                      {{
+                        (stats.productWithMinimumOrders.lastOrderDate | date) ||
+                          "Never"
+                      }}</strong
+                    >
+                  </p>
+                </div>
+              </div>
+              <ng-template #noLeastOrdered>
+                <p-messages
+                  severity="info"
+                  text="No product with low orders"
+                  styleClass="mt-2"
+                ></p-messages>
+              </ng-template>
+            </p-card>
+          </div>
+        </div>
+
+        <div class="col-12">
+          <p-card
+            class="stat-card mb-5 shadow border-0"
+            header="Products Needing Reorder"
+            subheader="Stock below reorder level"
+          >
+            <div
+              *ngIf="
+                stats.productsToReorder?.length > 0;
+                else noReorderProducts
+              "
+            >
+              <div class="table-responsive">
+                <table
+                  class="reorder-table table table-striped table-hover styled-reorder-table align-middle"
+                >
+                  <thead class="table-light">
+                    <tr>
+                      <th
+                        *ngFor="let col of reorderTableColumns"
+                        class="fw-semibold"
+                      >
+                        {{ col.header }}
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let product of stats.productsToReorder">
+                      <td *ngFor="let col of reorderTableColumns">
+                        <ng-container [ngSwitch]="col.field">
+                          <ng-container *ngSwitchCase="'Name'">
+                            <span class="product-name fw-bold">
+                              {{ product.Name || product.name }}
+                            </span>
+                          </ng-container>
+                          <ng-container *ngSwitchCase="'UnitsInStock'">
+                            <span
+                              [class]="
+                                'stock-value px-2 py-1 rounded ' +
+                                getStockStatusClass(
+                                  product.UnitsInStock || product.unitsInStock,
+                                  product.ReorderLevel || product.reorderLevel
+                                )
+                              "
+                            >
+                              {{ product.UnitsInStock || product.unitsInStock }}
+                            </span>
+                          </ng-container>
+                          <ng-container *ngSwitchCase="'ReorderLevel'">
+                            <span class="reorder-level">
+                              {{ product.ReorderLevel || product.reorderLevel }}
+                            </span>
+                          </ng-container>
+                          <ng-container *ngSwitchCase="'SupplierName'">
+                            <span class="supplier-name">
+                              {{
+                                product.SupplierName ||
+                                  product.supplierName ||
+                                  "N/A"
+                              }}
+                            </span>
+                          </ng-container>
+                          <ng-container *ngSwitchCase="'LastOrderedDate'">
+                            <span class="last-ordered-date">
+                              {{
+                                (product.LastOrderedDate ||
+                                  product.lastOrderedDate
+                                  | date : "mediumDate") || "Never"
+                              }}
+                            </span>
+                          </ng-container>
+                          <ng-container *ngSwitchDefault>
+                            {{ product[col.field] }}
+                          </ng-container>
+                        </ng-container>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <ng-template #noReorderProducts>
+              <p-messages
+                severity="info"
+                text="No products need reordering"
+                styleClass="mt-2"
+              ></p-messages>
+            </ng-template>
+          </p-card>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+</div>

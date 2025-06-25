@@ -9,8 +9,9 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { CardModule } from 'primeng/card';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { SupplierFormComponent } from '../Supplier-form/supplier-form.component';
-import { ApiService } from '../../core/services/api.service';
 import { FormsModule } from '@angular/forms';
+import { IPaginatedRequest } from '../../core/generated/Interfaces';
+import { SupplierService } from '../../core/services/SupplierService';
 
 @Component({
   selector: 'app-supplier-list',
@@ -24,21 +25,14 @@ import { FormsModule } from '@angular/forms';
     ToastModule,
     ConfirmDialogModule,
     CardModule,
-        CommonModule,
-        FormsModule,
-        TableModule,
-        ButtonModule,
-        DialogModule,
-        ToastModule,
-        ConfirmDialogModule,
-        CardModule,
+    FormsModule,
   ],
   templateUrl: './supplier-list.component.html',
   styleUrls: ['./supplier-list.component.scss'],
-  providers: [ConfirmationService, MessageService]
+  providers: [ConfirmationService, MessageService],
 })
 export class SupplierListComponent implements OnInit {
-//   suppliers: Supplier[] = [];
+  //   suppliers: Supplier[] = [];
   suppliers: any[] = [];
   filteredSuppliers: any[] = [];
   searchTerm: string = '';
@@ -47,7 +41,7 @@ export class SupplierListComponent implements OnInit {
   loading = true;
 
   constructor(
-    private apiService: ApiService,
+    private apiService: SupplierService,
     private messageService: MessageService,
     private confirmationService: ConfirmationService
   ) {}
@@ -58,7 +52,12 @@ export class SupplierListComponent implements OnInit {
 
   loadSuppliers(): void {
     this.loading = true;
-    this.apiService.getSuppliers().subscribe({
+    const paginatedRequest: IPaginatedRequest = {
+      PageNumber: 1,
+      PageSize: 20,
+      SearchValue: '',
+    };
+    this.apiService.getSuppliers(paginatedRequest).subscribe({
       next: (data: any) => {
         this.suppliers = data.data;
         this.filterSuppliers();
@@ -68,16 +67,16 @@ export class SupplierListComponent implements OnInit {
         this.messageService.add({
           severity: 'error',
           summary: 'Error',
-          detail: 'Failed to load Suppliers'
+          detail: 'Failed to load Suppliers',
         });
         this.loading = false;
-      }
+      },
     });
   }
 
   filterSuppliers() {
     const search = this.searchTerm?.toLowerCase() || '';
-    this.filteredSuppliers = this.suppliers.filter(supplier =>
+    this.filteredSuppliers = this.suppliers.filter((supplier) =>
       supplier.name?.toLowerCase().includes(search)
     );
   }
@@ -98,7 +97,7 @@ export class SupplierListComponent implements OnInit {
             this.messageService.add({
               severity: 'success',
               summary: 'Success',
-              detail: 'Supplier deleted successfully'
+              detail: 'Supplier deleted successfully',
             });
             this.loadSuppliers();
           },
@@ -106,11 +105,11 @@ export class SupplierListComponent implements OnInit {
             this.messageService.add({
               severity: 'error',
               summary: 'Error',
-              detail: 'Failed to delete supplier'
+              detail: 'Failed to delete supplier',
             });
-          }
+          },
         });
-      }
+      },
     });
   }
 
@@ -126,7 +125,7 @@ export class SupplierListComponent implements OnInit {
     this.messageService.add({
       severity: 'success',
       summary: 'Success',
-      detail: 'Supplier saved successfully'
+      detail: 'Supplier saved successfully',
     });
   }
 
@@ -135,7 +134,7 @@ export class SupplierListComponent implements OnInit {
     this.selectedSupplier = null;
   }
 
-   onSearch(): void {
+  onSearch(): void {
     // Optionally implement filtering logic here, e.g.:
     // this.filteredProducts = this.products.filter(product =>
     //   product.name.toLowerCase().includes(this.searchTerm.toLowerCase())

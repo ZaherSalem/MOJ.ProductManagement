@@ -1,18 +1,31 @@
-import { Component, EventEmitter, Input, Output, OnChanges } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  Output,
+  OnChanges,
+} from '@angular/core';
+import {
+  FormBuilder,
+  FormGroup,
+  Validators,
+  ReactiveFormsModule,
+} from '@angular/forms';
 import { Supplier } from '../supplier.model';
 import { CommonModule } from '@angular/common';
-import { ApiService } from '../../core/services/api.service';
 import { ButtonModule } from 'primeng/button';
-import { SupplierDto } from '../../models/supplier.model';
-import { CreateSupplierDto } from '../../models/CreateSupplierDto.model';
+import { SupplierService } from '../../core/services/SupplierService';
+import {
+  ICreateSupplierDto,
+  ISupplierDto,
+} from '../../core/generated/Interfaces';
 
 @Component({
   selector: 'app-supplier-form',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, ButtonModule],
   templateUrl: './supplier-form.component.html',
-  styleUrls: ['./supplier-form.component.scss']
+  styleUrls: ['./supplier-form.component.scss'],
 })
 export class SupplierFormComponent implements OnChanges {
   @Input() supplier: Supplier | null = null;
@@ -21,10 +34,10 @@ export class SupplierFormComponent implements OnChanges {
 
   form: FormGroup;
 
-  constructor(private fb: FormBuilder, private apiService: ApiService) {
+  constructor(private fb: FormBuilder, private apiService: SupplierService) {
     this.form = this.fb.group({
       id: [null],
-      name: ['', Validators.required]
+      name: ['', Validators.required],
     });
   }
 
@@ -37,14 +50,14 @@ export class SupplierFormComponent implements OnChanges {
   save() {
     if (this.form.invalid) return;
     if (this.form.value && this.form.value.id !== null) {
-        //   this.apiService.updateSupplier(value).subscribe(() => this.saved.emit());
-        const dto: SupplierDto = {...this.form.value};
-        this.apiService.updateSupplier((dto.id), dto).subscribe(() => this.saved.emit()); 
+      const dto: ISupplierDto = { ...this.form.value };
+      this.apiService
+        .updateSupplier(dto.Id, dto)
+        .subscribe(() => this.saved.emit());
     } else {
-        //   this.apiService.addSupplier(value).subscribe(() => this.saved.emit());
-        const dto: CreateSupplierDto = {...this.form.value};
-    this.apiService.createSupplier(dto).subscribe(() => this.saved.emit()); 
-}
+      const dto: ICreateSupplierDto = { ...this.form.value };
+      this.apiService.createSupplier(dto).subscribe(() => this.saved.emit());
+    }
   }
 
   cancel() {

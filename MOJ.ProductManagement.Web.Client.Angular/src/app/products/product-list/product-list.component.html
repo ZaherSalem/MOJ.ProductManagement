@@ -1,44 +1,102 @@
-<div class="main-container">
-    <p-toast></p-toast>
-  
-    <div class="d-flex justify-content-between align-items-center mb-4">
-      <h2>Products Management</h2>
-      <button pButton icon="pi pi-plus" label="Add Product" (click)="showEditDialog()"></button>
-    </div>
-    <div class="mb-3">
-      <input type="text" pInputText placeholder="Search products..." [(ngModel)]="searchTerm" (input)="onSearch()" class="me-2" style="width: 250px;" />
-    </div>
-  
-    <p-card>
-      <p-table [value]="products" [loading]="loading" [paginator]="true" [rows]="10">
-        <ng-template pTemplate="header">
-          <tr>
-            <th *ngFor="let col of columnHeaders">{{ col.label }}</th>
-          </tr>
-        </ng-template>
-        <ng-template pTemplate="body" let-product>
-            <tr>
-            <td *ngFor="let col of columnHeaders">
-              {{ product[col.field] }}
-            </td>
-            <td>
-              <button pButton icon="pi pi-pencil" class="p-button-rounded p-button-success me-2"
-                  (click)="showEditDialog(product)"></button>
-              <button pButton icon="pi pi-trash" class="p-button-rounded p-button-danger"
-                  (click)="confirmDelete(product)"></button>
-            </td>
-            </tr>
-        </ng-template>
-      </p-table>
-    </p-card>
-  
-    <p-dialog [(visible)]="displayDialog" [style]="{width: '450px'}" header="Product Details" [modal]="true">
-      <app-product-form
-        [selectedProduct]="selectedProduct"
-        [quantityOptions]="quantityOptions"
-        [suppliers]="suppliers"
-        (save)="saveProduct()"
-        (cancel)="displayDialog=false">
-      </app-product-form>
-    </p-dialog>
+<div class="main-container p-4" style="background: #f8f9fa; min-height: 100vh">
+  <p-toast></p-toast>
+
+  <div class="d-flex justify-content-between align-items-center mb-4 divider">
+    <h2
+      class="mb-0"
+      style="font-weight: 600; color: #2c3e50; letter-spacing: 1px"
+    >
+      Products Management
+    </h2>
+    <button
+      pButton
+      icon="pi pi-plus"
+      label="Add Product"
+      (click)="showEditDialog()"
+      class="p-button-raised p-button-primary"
+    ></button>
   </div>
+  <div
+    class="mb-4 d-flex align-items-center search-bar"
+    style="gap: 1rem; max-width: 400px"
+  >
+    <span class="pi pi-search" style="font-size: 1.2rem; color: #6c757d"></span>
+    <input
+      type="text"
+      pInputText
+      placeholder="Search products..."
+      [(ngModel)]="searchTerm"
+      (input)="onSearch()"
+      style="width: 100%; border: none; outline: none; background: transparent"
+    />
+  </div>
+
+  <div class="fantastic-grid-wrapper">
+    <p-card
+      [style]="{
+        'border-radius': '16px',
+        'box-shadow': 'none',
+        background: 'transparent',
+        padding: '0'
+      }"
+    >
+      <div
+        class="p-datatable-striped p-datatable-gridlines"
+        style="border-radius: 12px; overflow: auto"
+      >
+        <p-table
+          [value]="products"
+          [loading]="loading"
+          [paginator]="true"
+          [rows]="10"
+          class="p-table"
+        >
+          <ng-template pTemplate="header">
+            <tr class="fantastic-header">
+              <th *ngFor="let col of columnHeaders">{{ col.label }}</th>
+              <th>Actions</th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-product>
+            <tr class="product-table-row">
+              <td *ngFor="let col of columnHeaders" class="fantastic-cell">
+                {{ product[col.field] }}
+              </td>
+              <td class="action-btns fantastic-cell">
+                <button
+                  pButton
+                  icon="pi pi-pencil"
+                  class="p-button-rounded p-button-success me-2"
+                  (click)="showEditDialog(product)"
+                ></button>
+                <button
+                  pButton
+                  icon="pi pi-trash"
+                  class="p-button-rounded p-button-danger"
+                  (click)="confirmDelete(product)"
+                ></button>
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </div>
+    </p-card>
+  </div>
+
+  <p-dialog
+    [(visible)]="displayDialog"
+    [style]="{ width: '450px', 'border-radius': '16px' }"
+    header="Product Details"
+    [modal]="true"
+    class="shadow-4"
+  >
+    <app-product-form
+      [selectedProduct]="selectedProduct"
+      [quantityOptions]="quantityOptions"
+      [suppliers]="suppliers"
+      (save)="saveProduct()"
+      (cancel)="displayDialog = false"
+    >
+    </app-product-form>
+  </p-dialog>
+</div>
