@@ -12,12 +12,17 @@ namespace MOJ.ProductManagement.Infrastructure.Data
         public DbSet<Product> Products { get; set; }
         public DbSet<Supplier> Suppliers { get; set; }
 
+        // Lookups
+        public DbSet<Lookup> Lookups { get; set; }
+
+
         // Configuration
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
             modelBuilder.ApplyConfiguration(new ProductConfiguration());
             modelBuilder.ApplyConfiguration(new SupplierConfiguration());
+            modelBuilder.ApplyConfiguration(new LookupConfiguration());
         }
     }
 }

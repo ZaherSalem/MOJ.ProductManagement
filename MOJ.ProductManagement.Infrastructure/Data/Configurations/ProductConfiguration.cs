@@ -16,9 +16,10 @@ namespace MOJ.ProductManagement.Infrastructure.Data.Configurations
                    .IsRequired()
                    .HasMaxLength(100);
 
-            builder.Property(p => p.QuantityPerUnit)
-                   .HasConversion<string>()
-                   .IsRequired();
+            builder.HasOne(p => p.QuantityPerUnit)
+                   .WithMany()
+                   .HasForeignKey(p => p.QuantityPerUnitId)
+                   .OnDelete(DeleteBehavior.Restrict);
 
             builder.Property(p => p.UnitPrice)
                    .HasPrecision(18, 2)

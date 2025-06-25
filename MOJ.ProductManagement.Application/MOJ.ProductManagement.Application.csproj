@@ -24,7 +24,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\MOJ.ProductManagement.Domain\MOJ.ProductManagement.Domain.csproj" />
+    <ProjectReference Include="..\MOJ.ProductManagement.Infrastructure\MOJ.ProductManagement.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>
