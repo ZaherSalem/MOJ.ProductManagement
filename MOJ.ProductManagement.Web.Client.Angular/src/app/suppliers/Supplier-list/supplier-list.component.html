@@ -5,9 +5,12 @@
   <h2>Suppliers Management</h2>
   <button pButton icon="pi pi-plus" label="Add Supplier" (click)="addSupplier()"></button>
 </div>
+ <div class="mb-3">
+      <input type="text" pInputText placeholder="Search suppliers..." [(ngModel)]="searchTerm" (input)="onSearch()" class="me-2" style="width: 250px;" />
+  </div>
 
 <p-card>
-  <p-table [value]="suppliers" [loading]="loading" [paginator]="true" [rows]="10">
+  <p-table [value]="filteredSuppliers" [loading]="loading" [paginator]="true" [rows]="10">
     <ng-template pTemplate="header">
       <tr>
         <th>#</th>
@@ -20,7 +23,7 @@
         <td>{{ supplier.code }}</td>
         <td>{{ supplier.name }}</td>
         <td>
-          <button pButton icon="pi pi-pencil" class="p-button-rounded p-button-success mr-2"
+          <button pButton icon="pi pi-pencil" class="p-button-rounded p-button-success me-2"
                   (click)="editSupplier(supplier)"></button>
           <button pButton icon="pi pi-trash" class="p-button-rounded p-button-danger"
                   (click)="deleteSupplier(supplier.id)"></button>
@@ -32,5 +35,4 @@
 
 <p-dialog [(visible)]="displayDialog" [style]="{width: '400px'}" header="Supplier Details" [modal]="true">
   <app-supplier-form *ngIf="displayDialog" [supplier]="selectedSupplier" (saved)="onFormSaved()" (cancelled)="onFormCancelled()"></app-supplier-form>
-
 </p-dialog>

@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Supplier } from './supplier.model';
+import { Supplier } from '../supplier.model';
 import { CommonModule } from '@angular/common';
 import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
@@ -8,8 +8,9 @@ import { ToastModule } from 'primeng/toast';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { CardModule } from 'primeng/card';
 import { ConfirmationService, MessageService } from 'primeng/api';
-import { SupplierFormComponent } from './supplier-form.component';
-import { ApiService } from '../core/services/api.service';
+import { SupplierFormComponent } from '../Supplier-form/supplier-form.component';
+import { ApiService } from '../../core/services/api.service';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-supplier-list',
@@ -22,7 +23,15 @@ import { ApiService } from '../core/services/api.service';
     DialogModule,
     ToastModule,
     ConfirmDialogModule,
-    CardModule
+    CardModule,
+        CommonModule,
+        FormsModule,
+        TableModule,
+        ButtonModule,
+        DialogModule,
+        ToastModule,
+        ConfirmDialogModule,
+        CardModule,
   ],
   templateUrl: './supplier-list.component.html',
   styleUrls: ['./supplier-list.component.scss'],
@@ -31,6 +40,8 @@ import { ApiService } from '../core/services/api.service';
 export class SupplierListComponent implements OnInit {
 //   suppliers: Supplier[] = [];
   suppliers: any[] = [];
+  filteredSuppliers: any[] = [];
+  searchTerm: string = '';
   selectedSupplier: Supplier | null = null;
   displayDialog = false;
   loading = true;
@@ -50,6 +61,7 @@ export class SupplierListComponent implements OnInit {
     this.apiService.getSuppliers().subscribe({
       next: (data: any) => {
         this.suppliers = data.data;
+        this.filterSuppliers();
         this.loading = false;
       },
       error: () => {
@@ -61,6 +73,13 @@ export class SupplierListComponent implements OnInit {
         this.loading = false;
       }
     });
+  }
+
+  filterSuppliers() {
+    const search = this.searchTerm?.toLowerCase() || '';
+    this.filteredSuppliers = this.suppliers.filter(supplier =>
+      supplier.name?.toLowerCase().includes(search)
+    );
   }
 
   editSupplier(supplier: Supplier) {
@@ -114,5 +133,12 @@ export class SupplierListComponent implements OnInit {
   onFormCancelled() {
     this.displayDialog = false;
     this.selectedSupplier = null;
+  }
+
+   onSearch(): void {
+    // Optionally implement filtering logic here, e.g.:
+    // this.filteredProducts = this.products.filter(product =>
+    //   product.name.toLowerCase().includes(this.searchTerm.toLowerCase())
+    // );
   }
 }

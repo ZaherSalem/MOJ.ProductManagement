@@ -18,6 +18,7 @@ import { eQuantityPerUnit } from '../../../Enums/eQuantityPerUnit';
 import { CreateProductDto } from '../../models/CreateProductDto';
 import { ProductDto } from '../../models/ProductDto';
 import { UpdateProductDto } from '../../models/UpdateProductDto';
+import { ProductFormComponent } from '../product-form/product-form.component';
 
 @Component({
   selector: 'app-product-list',
@@ -34,8 +35,8 @@ import { UpdateProductDto } from '../../models/UpdateProductDto';
     InputNumberModule,
     ToastModule,
     ConfirmDialogModule,
-    CardModule
-    
+    CardModule,
+    ProductFormComponent
   ],
   templateUrl: './product-list.component.html',
   providers: [ConfirmationService, MessageService],
@@ -55,6 +56,19 @@ export class ProductListComponent implements OnInit {
   quantityOptions = Object.entries(eQuantityPerUnit)
     .filter(([key, value]) => isNaN(Number(key)))
     .map(([key, value]) => ({ label: key, value }));
+
+  columnHeaders = [
+    { label: 'Name', field: 'name' },
+    { label: 'Quantity Per Unit', field: 'quantityPerUnitName' },
+    { label: 'Unit Price', field: 'unitPrice' },
+    { label: 'In Stock', field: 'unitsInStock' },
+    { label: 'On Order', field: 'unitsOnOrder' },
+    { label: 'Reorder Level', field: 'reorderLevel' },
+    { label: 'Supplier', field: 'supplierName' },
+    { label: 'Actions', field: 'actions' }
+  ];
+
+  searchTerm: string = '';
 
   constructor(
     private apiService: ApiService,
@@ -159,6 +173,13 @@ export class ProductListComponent implements OnInit {
         });
       }
     });
+  }
+
+  onSearch(): void {
+    // Optionally implement filtering logic here, e.g.:
+    // this.filteredProducts = this.products.filter(product =>
+    //   product.name.toLowerCase().includes(this.searchTerm.toLowerCase())
+    // );
   }
 }
 

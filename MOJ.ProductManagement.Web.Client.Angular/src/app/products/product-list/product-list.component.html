@@ -5,94 +5,40 @@
       <h2>Products Management</h2>
       <button pButton icon="pi pi-plus" label="Add Product" (click)="showEditDialog()"></button>
     </div>
+    <div class="mb-3">
+      <input type="text" pInputText placeholder="Search products..." [(ngModel)]="searchTerm" (input)="onSearch()" class="me-2" style="width: 250px;" />
+    </div>
   
     <p-card>
       <p-table [value]="products" [loading]="loading" [paginator]="true" [rows]="10">
         <ng-template pTemplate="header">
           <tr>
-            <th>Name</th>
-            <th>Quantity Per Unit</th>
-            <th>Unit Price</th>
-            <th>In Stock</th>
-            <th>On Order</th>
-            <th>Reorder Level</th>
-            <th>Supplier</th>
-            <th>Actions</th>
+            <th *ngFor="let col of columnHeaders">{{ col.label }}</th>
           </tr>
         </ng-template>
         <ng-template pTemplate="body" let-product>
-          <tr>
-            <td>{{product.name}}</td>
-            <td>{{product.quantityPerUnitName}}</td>
-            <td>{{product.unitPrice | currency}}</td>
-            <td [ngClass]="{'text-danger': product.unitsInStock <= product.reorderLevel}">
-              {{product.unitsInStock}}
+            <tr>
+            <td *ngFor="let col of columnHeaders">
+              {{ product[col.field] }}
             </td>
-            <td>{{product.unitsOnOrder}}</td>
-            <td>{{product.reorderLevel}}</td>
-            <td>{{product.supplierName}}</td>
             <td>
-              <button pButton icon="pi pi-pencil" class="p-button-rounded p-button-success mr-2" 
-                      (click)="showEditDialog(product)"></button>
-              <button pButton icon="pi pi-trash" class="p-button-rounded p-button-danger" 
-                      (click)="confirmDelete(product)"></button>
+              <button pButton icon="pi pi-pencil" class="p-button-rounded p-button-success me-2"
+                  (click)="showEditDialog(product)"></button>
+              <button pButton icon="pi pi-trash" class="p-button-rounded p-button-danger"
+                  (click)="confirmDelete(product)"></button>
             </td>
-          </tr>
+            </tr>
         </ng-template>
       </p-table>
     </p-card>
   
     <p-dialog [(visible)]="displayDialog" [style]="{width: '450px'}" header="Product Details" [modal]="true">
-      <form (ngSubmit)="saveProduct()" #productForm="ngForm">
-        <div class="p-fluid">
-          <div class="p-field">
-            <label for="name">Name</label>
-            <input id="name" type="text" pInputText [(ngModel)]="selectedProduct.name" name="name" required>
-          </div>
-  
-          <div class="p-field">
-            <label for="quantityPerUnit">Quantity Per Unit</label>
-            <p-dropdown [options]="quantityOptions" [(ngModel)]="selectedProduct.quantityPerUnitId" 
-                       name="quantityPerUnit" required></p-dropdown>
-          </div>
-  
-          <div class="p-field">
-            <label for="unitPrice">Unit Price</label>
-            <p-inputNumber id="unitPrice" [(ngModel)]="selectedProduct.unitPrice" name="unitPrice" 
-                          mode="currency" currency="USD" required></p-inputNumber>
-          </div>
-  
-          <div class="p-field">
-            <label for="unitsInStock">Units In Stock</label>
-            <p-inputNumber id="unitsInStock" [(ngModel)]="selectedProduct.unitsInStock" name="unitsInStock" 
-                           required></p-inputNumber>
-          </div>
-  
-          <div class="p-field">
-            <label for="unitsOnOrder">Units On Order</label>
-            <p-inputNumber id="unitsOnOrder" [(ngModel)]="selectedProduct.unitsOnOrder" name="unitsOnOrder" 
-                           required></p-inputNumber>
-          </div>
-  
-          <div class="p-field">
-            <label for="reorderLevel">Reorder Level</label>
-            <p-inputNumber id="reorderLevel" [(ngModel)]="selectedProduct.reorderLevel" name="reorderLevel" 
-                           required></p-inputNumber>
-          </div>
-  
-          <div class="p-field">
-            <label for="supplierId">Supplier</label>
-            <p-dropdown [options]="suppliers" [(ngModel)]="selectedProduct.supplierId" 
-                       optionLabel="name" optionValue="id" name="supplierId" required></p-dropdown>
-          </div>
-        </div>
-  
-        <div class="p-dialog-footer">
-          <button pButton type="button" label="Cancel" icon="pi pi-times" class="p-button-text" 
-                  (click)="displayDialog=false"></button>
-          <button pButton type="submit" label="Save" icon="pi pi-check" 
-                  [disabled]="!productForm.form.valid"></button>
-        </div>
-      </form>
+      <app-product-form
+        [selectedProduct]="selectedProduct"
+        [quantityOptions]="quantityOptions"
+        [suppliers]="suppliers"
+        (save)="saveProduct()"
+        (cancel)="displayDialog=false">
+      </app-product-form>
     </p-dialog>
   </div>

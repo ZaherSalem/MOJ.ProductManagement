@@ -1,0 +1,40 @@
+<form (ngSubmit)="saveProduct()" #productForm="ngForm">
+  <div class="p-fluid">
+    <div class="p-field">
+      <label for="name">Name</label>
+      <input id="name" type="text" pInputText [(ngModel)]="selectedProduct.name" name="name" required>
+    </div>
+    <div class="p-field">
+      <label for="quantityPerUnit">Quantity Per Unit</label>
+      <p-dropdown [(ngModel)]="selectedProduct.quantityPerUnitId" name="quantityPerUnit" required>
+        <ng-template let-option pTemplate="item" *ngFor="let option of quantityOptions">
+          <span>{{ option.label }}</span>
+        </ng-template>
+      </p-dropdown>
+    </div>
+    <div class="p-field">
+      <label for="unitPrice">Unit Price</label>
+      <p-inputNumber id="unitPrice" [(ngModel)]="selectedProduct.unitPrice" name="unitPrice" mode="currency" currency="USD" required></p-inputNumber>
+    </div>
+    <div class="p-field">
+      <label for="unitsInStock">Units In Stock</label>
+      <p-inputNumber id="unitsInStock" [(ngModel)]="selectedProduct.unitsInStock" name="unitsInStock" required></p-inputNumber>
+    </div>
+    <div class="p-field">
+      <label for="unitsOnOrder">Units On Order</label>
+      <p-inputNumber id="unitsOnOrder" [(ngModel)]="selectedProduct.unitsOnOrder" name="unitsOnOrder" required></p-inputNumber>
+    </div>
+    <div class="p-field">
+      <label for="reorderLevel">Reorder Level</label>
+      <p-inputNumber id="reorderLevel" [(ngModel)]="selectedProduct.reorderLevel" name="reorderLevel" required></p-inputNumber>
+    </div>
+    <div class="p-field">
+      <label for="supplierId">Supplier</label>
+      <p-dropdown [options]="suppliers" [(ngModel)]="selectedProduct.supplierId" optionLabel="name" optionValue="id" name="supplierId" required></p-dropdown>
+    </div>
+  </div>
+  <div class="p-dialog-footer">
+    <button pButton type="button" label="Cancel" icon="pi pi-times" class="p-button-text" (click)="cancel.emit()"></button>
+    <button pButton type="submit" label="Save" icon="pi pi-check" [disabled]="!productForm.form.valid"></button>
+  </div>
+</form>

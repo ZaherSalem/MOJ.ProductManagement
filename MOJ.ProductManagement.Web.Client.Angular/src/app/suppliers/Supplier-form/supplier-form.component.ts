@@ -1,11 +1,11 @@
 import { Component, EventEmitter, Input, Output, OnChanges } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { Supplier } from './supplier.model';
+import { Supplier } from '../supplier.model';
 import { CommonModule } from '@angular/common';
-import { ApiService } from '../core/services/api.service';
+import { ApiService } from '../../core/services/api.service';
 import { ButtonModule } from 'primeng/button';
-import { SupplierDto } from '../models/supplier.model';
-import { CreateSupplierDto } from '../models/CreateSupplierDto.model';
+import { SupplierDto } from '../../models/supplier.model';
+import { CreateSupplierDto } from '../../models/CreateSupplierDto.model';
 
 @Component({
   selector: 'app-supplier-form',
