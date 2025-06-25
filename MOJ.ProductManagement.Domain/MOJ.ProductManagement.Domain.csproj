@@ -12,9 +12,27 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="Enums\EnumGenerator.tt">
+    <None Update="Enums\AngularEnumGenerator.tmp">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>AngularEnumGenerator.tt</DependentUpon>
+    </None>
+    <None Update="Enums\ApiEnumGenerator.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>EnumGenerator.cs</LastGenOutput>
+      <LastGenOutput>ApiEnumGenerator.cs</LastGenOutput>
+    </None>
+    <None Update="Enums\FrontEnumGenerator.tmp">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>FrontEnumGenerator.tt</DependentUpon>
+    </None>
+    <None Update="Enums\FrontEnumGenerator.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>FrontEnumGenerator.tmp</LastGenOutput>
+    </None>
+    <None Update="Enums\AngularEnumGenerator.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>AngularEnumGenerator.tmp</LastGenOutput>
     </None>
   </ItemGroup>
 
@@ -23,10 +41,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="Enums\EnumGenerator.cs">
+    <Compile Update="Enums\ApiEnumGenerator.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
-      <DependentUpon>EnumGenerator.tt</DependentUpon>
+      <DependentUpon>ApiEnumGenerator.tt</DependentUpon>
     </Compile>
   </ItemGroup>
 

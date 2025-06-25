@@ -1,0 +1,167 @@
+﻿<#@ template debug="false" hostspecific="true" language="C#" #>
+<#@ assembly name="System.Data" #>
+<#@ assembly name="System.Core" #>
+<#@ assembly name="System.IO" #>
+<#@ assembly name="EnvDTE" #>
+<#@ import namespace="System.Data" #>
+<#@ import namespace="System.Data.SqlClient" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ import namespace="System.IO" #>
+<#@ import namespace="EnvDTE" #>
+<#@ output extension=".tmp" #>
+
+<#
+    // CONFIGURATION
+    string connectionString = "Server=localhost;Database=ProductsManagment;User Id=sa;Password=YourStrong@Passw0rd;TrustServerCertificate=True;";
+    string lookupTableName = "Lookups";
+    string outputFileName = "generated-enums.ts";  // Fixed typo in filename
+    
+    // Path to the target Angular project (relative or absolute)
+    string angularProjectPath = Path.Combine(
+        Path.GetDirectoryName(Host.TemplateFile), 
+        "../../MOJ.ProductManagement.Web.Client.Angular/src/app/core/generated"
+    );
+
+    try {
+        // Get lookup data
+        var lookupItems = GetLookupItems(connectionString, lookupTableName);
+        var rootItems = lookupItems.Where(x => x.ParentId == null)
+                                 .OrderBy(x => x.Id)
+                                 .ToList();
+
+        // Generate TypeScript content
+        var tsContent = GenerateTypeScriptEnums(rootItems, lookupItems);
+        
+        // Resolve the full output path
+        string fullOutputPath = Path.GetFullPath(Path.Combine(angularProjectPath, outputFileName));
+        
+        // Ensure directory exists
+        Directory.CreateDirectory(Path.GetDirectoryName(fullOutputPath));
+        
+        // Write to Angular project
+        File.WriteAllText(fullOutputPath, tsContent);
+        
+        WriteLine("// Enums successfully generated at: " + fullOutputPath);
+        
+        // OPTIONAL: Try to add to Visual Studio project (if the target is in the same solution)
+        try {
+            IServiceProvider hostServiceProvider = (IServiceProvider)Host;
+            EnvDTE.DTE dte = (EnvDTE.DTE)hostServiceProvider.GetService(typeof(EnvDTE.DTE));
+            
+            if (dte != null) {
+                // Find the target project item
+                ProjectItem targetProjectItem = dte.Solution.FindProjectItem(fullOutputPath);
+                
+                if (targetProjectItem == null) {
+                    // Find the target project by name or path
+                    Project targetProject = null;
+                    foreach (Project project in dte.Solution.Projects) {
+                        if (project.FullName.Contains("MOJ.ProductManagement.Web.Client")) {
+                            targetProject = project;
+                            break;
+                        }
+                    }
+                    
+                    if (targetProject != null) {
+                        string relativePath = MakeRelativePath(
+                            Path.GetDirectoryName(targetProject.FullName),
+                            fullOutputPath
+                        );
+                        
+                        targetProject.ProjectItems.AddFromFile(fullOutputPath);
+                    }
+                }
+            }
+        }
+        catch (Exception vsEx) {
+            WriteLine("// Warning: Could not add file to Visual Studio project: " + vsEx.Message);
+        }
+    } 
+    catch (Exception ex) {
+        WriteLine("// Error generating enums: " + ex.Message);
+    }
+#>
+
+<#+
+private string GenerateTypeScriptEnums(List<LookupItem> rootItems, List<LookupItem> allItems) {
+    var sb = new System.Text.StringBuilder();
+    
+    sb.AppendLine("// Auto-generated TypeScript enums");
+    sb.AppendLine("// Generated on " + DateTime.Now.ToString("yyyy-MM-dd HH:mm"));
+    sb.AppendLine("// DO NOT EDIT - Regenerate from T4 template instead");
+    sb.AppendLine();
+    
+    foreach (var rootItem in rootItems) {
+        var childItems = allItems.Where(x => x.ParentId == rootItem.Id)
+                               .OrderBy(x => x.Id)
+                               .ToList();
+        
+        // Generate Enum
+        sb.AppendLine($"export enum {ToPascalCase(rootItem.Name)} {{");
+        foreach (var child in childItems) {
+            sb.AppendLine($"    {ToPascalCase(child.Name)} = {child.Id},");
+        }
+        sb.AppendLine("}");
+        sb.AppendLine();
+        
+        // Generate Labels
+        sb.AppendLine($"export const {ToPascalCase(rootItem.Name)}Labels: Record<{ToPascalCase(rootItem.Name)}, string> = {{");
+        foreach (var child in childItems) {
+            sb.AppendLine($"    [{ToPascalCase(rootItem.Name)}.{ToPascalCase(child.Name)}]: '{EscapeJsString(child.Name)}',");
+        }
+        sb.AppendLine("};");
+        sb.AppendLine();
+    }
+    
+    return sb.ToString();
+}
+
+private List<LookupItem> GetLookupItems(string connectionString, string tableName) {
+    var items = new List<LookupItem>();
+    using (var connection = new SqlConnection(connectionString)) {
+        connection.Open();
+        string query = $"SELECT Id, Name, ParentId FROM {tableName} ORDER BY ParentId, Id";
+        using (var command = new SqlCommand(query, connection))
+        using (var reader = command.ExecuteReader()) {
+            while (reader.Read()) {
+                items.Add(new LookupItem {
+                    Id = reader.GetInt32(0),
+                    Name = reader.GetString(1),
+                    ParentId = reader.IsDBNull(2) ? null : (int?)reader.GetInt32(2)
+                });
+            }
+        }
+    }
+    return items;
+}
+
+private string ToPascalCase(string input) {
+    if (string.IsNullOrWhiteSpace(input)) return "Unknown";
+    var cleaned = System.Text.RegularExpressions.Regex.Replace(input, @"[^a-zA-Z0-9]", " ");
+    var textInfo = System.Globalization.CultureInfo.CurrentCulture.TextInfo;
+    return string.Join("", cleaned.Split(new[] {' '}, StringSplitOptions.RemoveEmptyEntries)
+                                .Select(word => textInfo.ToTitleCase(word.ToLower())))
+                                .Replace(" ", "");
+}
+
+private string EscapeJsString(string input) {
+    return input?.Replace("'", "\\'")?.Replace("\"", "\\\"") ?? string.Empty;
+}
+
+private string MakeRelativePath(string fromPath, string toPath) {
+    Uri fromUri = new Uri(fromPath);
+    Uri toUri = new Uri(toPath);
+    
+    Uri relativeUri = fromUri.MakeRelativeUri(toUri);
+    string relativePath = Uri.UnescapeDataString(relativeUri.ToString());
+    
+    return relativePath.Replace('/', Path.DirectorySeparatorChar);
+}
+
+internal class LookupItem {
+    public int Id { get; set; }
+    public string Name { get; set; }
+    public int? ParentId { get; set; }
+}
+#>

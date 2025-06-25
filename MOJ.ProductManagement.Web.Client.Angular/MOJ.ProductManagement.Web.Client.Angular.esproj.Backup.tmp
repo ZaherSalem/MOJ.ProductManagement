@@ -8,6 +8,6 @@
     <BuildOutputFolder>$(MSBuildProjectDirectory)\dist\MOJ.ProductManagement.Web.Client.Angular\browser\</BuildOutputFolder>
   </PropertyGroup>
   <ItemGroup>
-    <Folder Include="src\app\core\generated\" />
+    <Folder Include="src\app\core\NewFolder\" />
   </ItemGroup>
 </Project>
