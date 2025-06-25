@@ -6,7 +6,7 @@ namespace MOJ.ProductManagement.Domain.Interfaces
     {
         IQueryable<T> Entities { get; }
 
-        Task<T> GetByIdAsync(Guid id);
+        Task<T> GetByIdAsync(int id);
         Task<List<T>> GetAllAsync();
         Task<T> AddAsync(T entity);
         Task<T> AddListAsync(List<T> entity);

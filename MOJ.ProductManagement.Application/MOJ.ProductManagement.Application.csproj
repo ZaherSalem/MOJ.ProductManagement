@@ -7,13 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="DTOs\" />
-    <Folder Include="Features\Products\Commands\" />
-    <Folder Include="Features\Products\Queries\" />
-    <Folder Include="Features\Suppliers\Commands\" />
-    <Folder Include="Features\Suppliers\Queries\" />
-    <Folder Include="Interfaces\" />
-    <Folder Include="Mappings\" />
     <Folder Include="Validators\" />
   </ItemGroup>
 

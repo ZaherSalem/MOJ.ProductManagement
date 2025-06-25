@@ -58,7 +58,7 @@ namespace MOJ.ProductManagement.Infrastructure.Repositories
             return await DbSet.ToListAsync();
         }
 
-        public async Task<T> GetByIdAsync(Guid id)
+        public async Task<T> GetByIdAsync(int id)
         {
             return await DbSet.FindAsync(id);
         }
