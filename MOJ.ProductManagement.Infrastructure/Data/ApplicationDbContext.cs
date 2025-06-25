@@ -1,4 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using MOJ.ProductManagement.Domain.Aggregates;
+using MOJ.ProductManagement.Domain.Entities;
+using MOJ.ProductManagement.Infrastructure.Data.Configurations;
 
 namespace MOJ.ProductManagement.Infrastructure.Data
 {
@@ -6,13 +9,15 @@ namespace MOJ.ProductManagement.Infrastructure.Data
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
 
-        //DbSet
+        public DbSet<Product> Products { get; set; }
+        public DbSet<Supplier> Suppliers { get; set; }
 
-        //Config
+        // Configuration
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-            //ApplyConfiguration
+            modelBuilder.ApplyConfiguration(new ProductConfiguration());
+            modelBuilder.ApplyConfiguration(new SupplierConfiguration());
         }
     }
 }

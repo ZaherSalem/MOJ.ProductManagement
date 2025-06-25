@@ -10,14 +10,11 @@
     <Folder Include="Common\" />
     <Folder Include="Entities\" />
     <Folder Include="Enums\" />
-    <Folder Include="Exceptions\" />
     <Folder Include="Interfaces\" />
-    <Folder Include="Aggregates\" />
-    <Folder Include="ValueObjects\" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\MOJ.ProductManagement.Infrastructure\MOJ.ProductManagement.Infrastructure.csproj" />
+    <PackageReference Include="Microsoft.CrmSdk.CoreAssemblies" Version="9.0.2.59" />
   </ItemGroup>
 
 </Project>
