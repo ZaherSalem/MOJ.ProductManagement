@@ -1,5 +1,7 @@
 using Microsoft.OpenApi.Models;
 using MOJ.ProductManagement.Application.Extensions;
+using MOJ.ProductManagement.Infrastructure.Data.Seed;
+using MOJ.ProductManagement.Infrastructure.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -49,7 +51,18 @@ var app = builder.Build();
 
   //CORS
  app.UseCors("AllowAll");
- 
+
+// Seed the database during application startup
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    var context = services.GetRequiredService<ApplicationDbContext>();
+
+    // Seed data
+    var seeder = services.GetRequiredService<DatabaseInitializer>();
+    await seeder.Initialize();
+}
+
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
