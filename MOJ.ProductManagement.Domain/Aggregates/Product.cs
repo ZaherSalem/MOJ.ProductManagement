@@ -2,7 +2,7 @@
 
 namespace MOJ.ProductManagement.Domain.Entities
 {
-    public class Product : AggregateRoot<int>
+    public class Product : AggregateRoot
     {
         public string Name { get; private set; }
         public int QuantityPerUnitId { get; private set; }

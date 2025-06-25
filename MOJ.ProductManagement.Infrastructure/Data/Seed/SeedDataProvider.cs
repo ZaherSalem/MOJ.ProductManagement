@@ -2,7 +2,7 @@
 
 namespace MOJ.ProductManagement.Infrastructure.Data.Seed
 {
-    public interface ISeedDataProvider<T, ET> where T : Entity<ET>
+    public interface ISeedDataProvider<T,ET> where T : Entity<ET>
     {
         IEnumerable<T> GetSeedData();
     }

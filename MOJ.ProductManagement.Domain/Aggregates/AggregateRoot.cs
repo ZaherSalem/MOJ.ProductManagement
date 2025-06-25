@@ -1,7 +1,9 @@
-﻿namespace MOJ.ProductManagement.Domain.Aggregates
+﻿using MOJ.ProductManagement.Domain.Entities;
+
+namespace MOJ.ProductManagement.Domain.Aggregates
 {
-    public abstract class AggregateRoot<TId> where TId : notnull
+    public abstract class AggregateRoot : BaseEntity
     {
-        public TId Id { get; protected set; }
+       
     }
 }
