@@ -1,0 +1,39 @@
+// 1. First import Bootstrap functions
+@import "bootstrap/scss/functions";
+
+// 2. Then define your custom variables
+$primary: #2c3e50;
+$secondary: #1abc9c;
+
+// 3. Import Bootstrap variables
+@import "bootstrap/scss/variables";
+
+// 4. Override Bootstrap variables AFTER the original variables are loaded
+$theme-colors: (
+  "primary": $primary,
+  "secondary": $secondary
+);
+
+// 5. Generate derived variables (like $theme-colors-rgb)
+@import "bootstrap/scss/maps";
+@import "bootstrap/scss/mixins";
+@import "bootstrap/scss/utilities";
+
+// 6. Now import the rest of Bootstrap
+@import "bootstrap/scss/root";
+@import "bootstrap/scss/reboot";
+@import "bootstrap/scss/type";
+@import "bootstrap/scss/containers";
+@import "bootstrap/scss/grid";
+@import "bootstrap/scss/buttons";
+
+// 7. Custom styles
+body {
+  padding: 20px;
+  font-family: $font-family-base;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+}

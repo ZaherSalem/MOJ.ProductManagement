@@ -18,7 +18,7 @@ namespace MOJ.ProductManagement.Application.DTOs.Product
         /// Unit of measurement for the product
         /// </summary>
         [Required]
-        public int quantityPerUnitId { get; set; }
+        public int QuantityPerUnitId { get; set; }
 
         /// <summary>
         /// Minimum stock level before reordering (must be >= 0)
@@ -30,7 +30,7 @@ namespace MOJ.ProductManagement.Application.DTOs.Product
         /// ID of the supplier (required)
         /// </summary>
         [Required]
-        public Guid SupplierId { get; set; }
+        public int SupplierId { get; set; }
 
         /// <summary>
         /// Price per unit (must be positive)

@@ -21,9 +21,9 @@ namespace MOJ.ProductManagement.Application.Features.Products.Commands.Add
                     return !await _unitOfWork.GetRepository<Product>().AnyAsync(_ => _.Name == name);
                 })
                 .WithMessage("Product name must be unique");
-                
-            RuleFor(x => x.dto.quantityPerUnitId)
-                .IsInEnum().WithMessage("Invalid quantity unit specified");
+
+            RuleFor(x => x.dto.QuantityPerUnitId)
+                .GreaterThanOrEqualTo(10).WithMessage("Invalid quantity unit specified");
 
             RuleFor(x => x.dto.ReorderLevel)
                 .GreaterThanOrEqualTo(0).WithMessage("Reorder level must be zero or positive");

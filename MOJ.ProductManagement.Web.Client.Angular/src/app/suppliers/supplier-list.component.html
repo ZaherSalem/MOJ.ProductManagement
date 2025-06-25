@@ -1,0 +1,36 @@
+<p-toast></p-toast>
+<p-confirmDialog></p-confirmDialog>
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h2>Suppliers Management</h2>
+  <button pButton icon="pi pi-plus" label="Add Supplier" (click)="addSupplier()"></button>
+</div>
+
+<p-card>
+  <p-table [value]="suppliers" [loading]="loading" [paginator]="true" [rows]="10">
+    <ng-template pTemplate="header">
+      <tr>
+        <th>#</th>
+        <th>Name</th>
+        <th>Actions</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-supplier>
+      <tr>
+        <td>{{ supplier.code }}</td>
+        <td>{{ supplier.name }}</td>
+        <td>
+          <button pButton icon="pi pi-pencil" class="p-button-rounded p-button-success mr-2"
+                  (click)="editSupplier(supplier)"></button>
+          <button pButton icon="pi pi-trash" class="p-button-rounded p-button-danger"
+                  (click)="deleteSupplier(supplier.id)"></button>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</p-card>
+
+<p-dialog [(visible)]="displayDialog" [style]="{width: '400px'}" header="Supplier Details" [modal]="true">
+  <app-supplier-form *ngIf="displayDialog" [supplier]="selectedSupplier" (saved)="onFormSaved()" (cancelled)="onFormCancelled()"></app-supplier-form>
+
+</p-dialog>

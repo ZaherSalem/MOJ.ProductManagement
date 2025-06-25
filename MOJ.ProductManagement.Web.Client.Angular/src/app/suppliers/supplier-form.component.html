@@ -1,0 +1,17 @@
+
+<form [formGroup]="form" (ngSubmit)="save()" class="p-fluid">
+  <div class="p-field">
+    <label for="name">Name</label>
+    <input id="name" type="text" pInputText formControlName="name" required />
+    <div *ngIf="form.get('name')?.invalid && form.get('name')?.touched" class="error">
+      Name is required.
+    </div>
+  </div>
+  
+  <div class="p-dialog-footer">
+      <button pButton type="button" label="Cancel" icon="pi pi-times" class="p-button-text" 
+      (click)="cancel()"></button>
+      <button pButton type="submit" label="Save" icon="pi pi-check" 
+      [disabled]="!form.valid"></button>
+    </div>
+</form>
