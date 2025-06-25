@@ -1,7 +1,7 @@
 ﻿namespace MOJ.ProductManagement.Domain.Entities
 {
-    public abstract class Entity<T>
+    public abstract class Entity<TKey>
     {
-        public T Id { get; set; }
+        public TKey Id { get; set; }
     }
 }

@@ -24,10 +24,11 @@ namespace MOJ.ProductManagement.Application.Features.Suppliers.Queries.Get
         public async Task<Result<SupplierDto>> Handle(GetSupplierQuery request, CancellationToken cancellationToken)
         {
             var prodcut = await _unitOfWork.GetRepository<Supplier>()
-                .GetQueryable()
-                .Where(_ => _.Id == request.id)
-                .ProjectTo<SupplierDto>(_mapper.ConfigurationProvider)
-                .SingleOrDefaultAsync(cancellationToken);
+                                           .GetQueryable()
+                                           .Where(_ => _.Id == request.id)
+                                           .ProjectTo<SupplierDto>(_mapper.ConfigurationProvider)
+                                           .AsNoTracking()
+                                           .SingleOrDefaultAsync(cancellationToken);
 
             if (prodcut == null)
             {

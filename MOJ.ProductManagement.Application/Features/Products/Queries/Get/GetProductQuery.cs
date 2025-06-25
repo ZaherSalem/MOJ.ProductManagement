@@ -23,19 +23,19 @@ namespace MOJ.ProductManagement.Application.Features.Products.Queries.Get
 
         public async Task<Result<ProductDto>> Handle(GetProductQuery request, CancellationToken cancellationToken)
         {
-            var prodcut = await _unitOfWork.GetRepository<Product>()
-                                           .GetQueryable()
-                                           .Where(_ => _.Id == request.id)
-                                           .ProjectTo<ProductDto>(_mapper.ConfigurationProvider)
-                                           .SingleOrDefaultAsync(cancellationToken);
+            var product = await _unitOfWork.GetRepository<Product>()
+                                             .GetQueryable()
+                                             .Where(_ => _.Id == request.id)
+                                             .ProjectTo<ProductDto>(_mapper.ConfigurationProvider)
+                                             .AsNoTracking()
+                                             .SingleOrDefaultAsync(cancellationToken);
 
-            if (prodcut == null)
+            if (product == null)
             {
                 return Result<ProductDto>.Failure("Product not found", 404);
             }
 
-
-            return Result<ProductDto>.Success(prodcut, 200);
+            return Result<ProductDto>.Success(product, 200);
         }
     }
 }

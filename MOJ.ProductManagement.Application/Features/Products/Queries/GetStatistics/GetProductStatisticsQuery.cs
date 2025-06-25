@@ -33,6 +33,7 @@ namespace MOJ.ProductManagement.Application.Features.Products.Queries.GetProduct
             var productsToReorder = await productRepo.GetQueryable()
                                                      .Where(p => p.UnitsInStock <= p.ReorderLevel)
                                                      .ProjectTo<ProductDto>(_mapper.ConfigurationProvider)
+                                                     .AsNoTracking()
                                                      .ToListAsync(cancellationToken);
 
 
@@ -42,6 +43,7 @@ namespace MOJ.ProductManagement.Application.Features.Products.Queries.GetProduct
                                                      .OrderByDescending(g => g.Count())
                                                      .Select(g => g.Key)
                                                      .ProjectTo<SupplierDto>(_mapper.ConfigurationProvider)
+                                                     .AsNoTracking()
                                                      .Cast<SupplierDto?>() // Ensure nullable for FirstOrDefaultAsync
                                                      .FirstOrDefaultAsync(cancellationToken);
 
@@ -51,6 +53,7 @@ namespace MOJ.ProductManagement.Application.Features.Products.Queries.GetProduct
             var productWithMinOrders = await productRepo.GetQueryable()
                                                         .OrderBy(p => p.UnitsOnOrder)
                                                         .ProjectTo<ProductDto>(_mapper.ConfigurationProvider)
+                                                        .AsNoTracking()
                                                         .FirstOrDefaultAsync(cancellationToken);
             var result = new ProductStatisticsDto
             {
