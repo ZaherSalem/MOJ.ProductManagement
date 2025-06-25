@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import {
@@ -35,13 +35,17 @@ export class ProductService {
   }
 
   getProducts(
-    params: IPaginatedRequest
+    paramsObj: IPaginatedRequest
   ): Observable<IPaginatedResult<IProductDto>> {
-    return this.http.get<IPaginatedResult<IProductDto>>(this.baseUrl, {
-      params: { ...params },
+    let params = new HttpParams();
+    (Object.keys(paramsObj) as (keyof IPaginatedRequest)[]).forEach((key) => {
+      const value = paramsObj[key];
+      if (value !== undefined && value !== null) {
+        params = params.set(key as string, value as any);
+      }
     });
+    return this.http.get<any>(this.baseUrl, { params });
   }
-
   deleteProduct(id: number): Observable<IResult<boolean>> {
     return this.http.delete<IResult<boolean>>(`${this.baseUrl}/${id}`);
   }
