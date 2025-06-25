@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using MOJ.ProductManagement.Application.DTOs;
 using MOJ.ProductManagement.Application.DTOs.Common;
 using MOJ.ProductManagement.Application.DTOs.Product;
 using MOJ.ProductManagement.Application.Features.Products.Commands.Add;
@@ -25,7 +26,7 @@ namespace MOJ.ProductManagement.WebApi.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateProduct(int id, [FromBody] UpdateProductDto updateDto)
+        public async Task<ActionResult<Result<ProductDto>>> UpdateProduct(int id, [FromBody] UpdateProductDto updateDto)
         {
             var result = await _mediator.Send(new UpdateProductCommand(updateDto));
             if (result.Succeeded)
@@ -35,7 +36,7 @@ namespace MOJ.ProductManagement.WebApi.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<ProductDto>> GetProduct(int id)
+        public async Task<ActionResult<Result<ProductDto>>> GetProduct(int id)
         {
             var result = await _mediator.Send(new GetProductQuery(id));
             if (result.Succeeded)
@@ -45,7 +46,7 @@ namespace MOJ.ProductManagement.WebApi.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<ProductDto>>> GetProducts([FromQuery] PaginatedRequest dto)
+        public async Task<ActionResult<PaginatedResult<ProductDto>>> GetProducts([FromQuery] PaginatedRequest dto)
         {
             var result = await _mediator.Send(new GetProductsQuery(dto));
             if (result.Succeeded)
@@ -55,9 +56,20 @@ namespace MOJ.ProductManagement.WebApi.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult<bool>> DeleteProduct(int id)
+        public async Task<ActionResult<Result<bool>>> DeleteProduct(int id)
         {
             var result = await _mediator.Send(new DeleteProductCommand(id));
+            if (result.Succeeded)
+                return Ok(result);
+
+            return BadRequest(result);
+        }
+
+        //GetProductStatisticsQuery
+        [HttpGet("statistics")]
+        public async Task<ActionResult<Result<ProductStatisticsDto>>> GetProductStatistics()
+        {
+            var result = await _mediator.Send(new GetProductStatisticsQuery());
             if (result.Succeeded)
                 return Ok(result);
 
