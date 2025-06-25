@@ -24,7 +24,7 @@ namespace MOJ.ProductManagement.Application.DTOs.Product
         /// Unit of measurement for the product
         /// </summary>
         [Required]
-        public int quantityPerUnitId { get; set; }
+        public int QuantityPerUnitId { get; set; }
 
         /// <summary>
         /// Minimum stock level before reordering (must be >= 0)

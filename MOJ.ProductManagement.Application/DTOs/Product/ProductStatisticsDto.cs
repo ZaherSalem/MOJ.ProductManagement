@@ -6,7 +6,7 @@ namespace MOJ.ProductManagement.Application.DTOs
     public class ProductStatisticsDto
     {
         public List<ProductDto>? ProductsToReorder { get; set; }
-        public SupplierDto? LargestSupplier { get; set; }
+        public LargestSupplierDto? LargestSupplier { get; set; }
         public ProductDto? ProductWithMinimumOrders { get; set; }
     }
 }

@@ -24,8 +24,8 @@ namespace MOJ.ProductManagement.Application.Features.Products.Queries.GetProduct
         {
             var prodcuts = await _unitOfWork.GetRepository<Product>()
                                             .GetQueryable()
-                                            .Where(_=> request.dto.SearchValue == null
-                                                    || (_.Name.Contains(request.dto.SearchValue)|| _.Supplier.Name.Contains(request.dto.SearchValue)) )
+                                            .Where(_ => string.IsNullOrEmpty(request.dto.SearchValue)
+                                                    || (_.Name.Contains(request.dto.SearchValue) || _.Supplier.Name.Contains(request.dto.SearchValue)))
                                             .ToPaginatedListAsync<Product, ProductDto>(_mapper, request.dto, cancellationToken);
 
             return prodcuts;

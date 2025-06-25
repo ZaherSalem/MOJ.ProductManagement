@@ -25,6 +25,8 @@ namespace MOJ.ProductManagement.Application.Features.Suppliers.Queries.GetAll
         {
             var suppliers = await _unitOfWork.GetRepository<Supplier>()
                                             .GetQueryable()
+                                            .Where(_ => string.IsNullOrEmpty(request.dto.SearchValue)
+                                                    || (_.Name.Contains(request.dto.SearchValue)))
                                             .ToPaginatedListAsync<Supplier, SupplierDto>(_mapper, request.dto, cancellationToken);
 
             return suppliers;

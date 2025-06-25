@@ -9,15 +9,14 @@
 <#
     // Set custom output filename
     string projectPath = Path.GetDirectoryName(Host.TemplateFile);
-
     string outputPath = Path.Combine(projectPath, "../../", "MOJ.ProductManagement.Web.Client.Angular", "src/app/core/generated", "Interfaces.ts");
-    
 #>
 
 <#
     // Type mapping dictionary
     var typeMap = new Dictionary<string, string> {
         {"string", "string"},
+        {"string?", "string | null"},
         {"int", "number"},
         {"long", "number"},
         {"decimal", "number"},
@@ -29,9 +28,19 @@
         {"DomainException","any"}
     };
 
-    //string projectPath = Path.GetDirectoryName(Host.TemplateFile);
     string dtosPath = Path.Combine(projectPath);
-
+    var customTypes = new HashSet<string>();
+    
+    // First pass: collect all custom types
+    foreach(string file in Directory.GetFiles(dtosPath, "*.cs", SearchOption.AllDirectories)) {
+        string[] lines = File.ReadAllLines(file);
+        foreach(string line in lines) {
+            var classMatch = Regex.Match(line, @"public (?:class|interface) (\w+)(?:<(\w+)>)?");
+            if(classMatch.Success) {
+                customTypes.Add(classMatch.Groups[1].Value);
+            }
+        }
+    }
 #>
 /**
  * WARNING: This file is auto-generated.
@@ -40,6 +49,7 @@
  */
 
 <#
+    // Second pass: generate interfaces
     foreach(string file in Directory.GetFiles(dtosPath, "*.cs", SearchOption.AllDirectories)) {
         string[] lines = File.ReadAllLines(file);
         string className = "";
@@ -58,10 +68,16 @@
                 continue;
             }
 
-            var propertyMatch = Regex.Match(line.Trim(), @"public\s+(\w+(?:<\w+>)?)\s+(\w+)\s*{\s*get;");
+            var propertyMatch = Regex.Match(line.Trim(), @"public\s+(\w+(?:<\w+>)?(?:\??))\s+(\w+)\s*{\s*get;");
             if(propertyMatch.Success) {
                 string propType = propertyMatch.Groups[1].Value;
                 string propName = propertyMatch.Groups[2].Value;
+                bool isNullable = propType.EndsWith("?");
+                
+                // Remove nullable marker for processing
+                if (isNullable) {
+                    propType = propType.Substring(0, propType.Length - 1);
+                }
                 
                 // Handle generic types
                 if(propType.Contains("<")) {
@@ -70,13 +86,23 @@
                     string innerType = genericMatch.Groups[2].Value;
                     
                     if(genericType == "List" || genericType == "IEnumerable" || genericType == "ICollection") {
-                        propType = $"{(typeMap.ContainsKey(innerType) ? typeMap[innerType] : innerType)}[]";
+                        propType = $"{(typeMap.ContainsKey(innerType) ? typeMap[innerType] : "I" + innerType)}[]";
                     } else {
                         // Handle other generic types
-                        propType = $"{genericType}<{(typeMap.ContainsKey(innerType) ? typeMap[innerType] : innerType)}>";
+                        propType = $"{genericType}<{(typeMap.ContainsKey(innerType) ? typeMap[innerType] : "I" + innerType)}>";
                     }
                 } else {
-                    propType = typeMap.ContainsKey(propType) ? typeMap[propType] : propType;
+                    // Check if this is a custom type
+                    if (customTypes.Contains(propType)) {
+                        propType = "I" + propType;
+                    } else {
+                        propType = typeMap.ContainsKey(propType) ? typeMap[propType] : propType;
+                    }
+                }
+                
+                // Add back nullable marker if needed
+                if (isNullable) {
+                    propType += " | null";
                 }
                 
                 properties.Add((propName, propType));

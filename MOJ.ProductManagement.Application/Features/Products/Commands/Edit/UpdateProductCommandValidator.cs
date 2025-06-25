@@ -13,7 +13,7 @@ namespace MOJ.ProductManagement.Application.Features.Products.Commands.Edit
                  .NotEmpty().WithMessage("Product name is required")
                  .MaximumLength(100).WithMessage("Product name cannot exceed 100 characters");
 
-            RuleFor(x => x.dto.quantityPerUnitId)
+            RuleFor(x => x.dto.QuantityPerUnitId)
                 .IsInEnum().WithMessage("Invalid quantity unit specified");
 
             RuleFor(x => x.dto.ReorderLevel)

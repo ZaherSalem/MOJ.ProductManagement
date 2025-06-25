@@ -41,10 +41,14 @@ namespace MOJ.ProductManagement.Application.Features.Products.Queries.GetProduct
             var largestSupplier = await productRepo.GetQueryable()
                                                      .GroupBy(p => p.Supplier)
                                                      .OrderByDescending(g => g.Count())
-                                                     .Select(g => g.Key)
-                                                     .ProjectTo<SupplierDto>(_mapper.ConfigurationProvider)
+                                                     .Select(g => new LargestSupplierDto
+                                                     {
+                                                         Id = g.Key.Id,
+                                                         Name = g.Key.Name,
+                                                         ProductCount = g.Sum(_ => _.UnitsInStock)
+                                                     })
                                                      .AsNoTracking()
-                                                     .Cast<SupplierDto?>() // Ensure nullable for FirstOrDefaultAsync
+                                                     .Cast<LargestSupplierDto?>() // Ensure nullable for FirstOrDefaultAsync
                                                      .FirstOrDefaultAsync(cancellationToken);
 
 
