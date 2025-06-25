@@ -3,7 +3,9 @@ using Microsoft.AspNetCore.Mvc;
 using MOJ.ProductManagement.Application.DTOs.Common;
 using MOJ.ProductManagement.Application.DTOs.Supplier;
 using MOJ.ProductManagement.Application.Features.Suppliers.Commands;
-using MOJ.SupplierManagement.Application.Features.Suppliers.Queries;
+using MOJ.ProductManagement.Application.Features.Suppliers.Commands.Edit;
+using MOJ.ProductManagement.Application.Features.Suppliers.Queries.Get;
+using MOJ.ProductManagement.Application.Features.Suppliers.Queries.GetAll;
 
 namespace MOJ.ProductManagement.WebApi.Controllers
 {
@@ -45,6 +47,16 @@ namespace MOJ.ProductManagement.WebApi.Controllers
         public async Task<ActionResult<List<SupplierDto>>> GetSuppliers([FromQuery] PaginatedRequest dto)
         {
             var result = await _mediator.Send(new GetSuppliersQuery(dto));
+            if (result.Succeeded)
+                return Ok(result);
+
+            return BadRequest(result);
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<ActionResult<bool>> DeleteSupplier(int id)
+        {
+            var result = await _mediator.Send(new DeleteSupplierCommand(id));
             if (result.Succeeded)
                 return Ok(result);
 

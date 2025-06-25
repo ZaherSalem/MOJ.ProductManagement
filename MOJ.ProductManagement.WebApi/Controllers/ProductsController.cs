@@ -2,8 +2,11 @@
 using Microsoft.AspNetCore.Mvc;
 using MOJ.ProductManagement.Application.DTOs.Common;
 using MOJ.ProductManagement.Application.DTOs.Product;
-using MOJ.ProductManagement.Application.Features.Products.Commands;
-using MOJ.ProductManagement.Application.Features.Products.Queries;
+using MOJ.ProductManagement.Application.Features.Products.Commands.Add;
+using MOJ.ProductManagement.Application.Features.Products.Commands.Delete;
+using MOJ.ProductManagement.Application.Features.Products.Commands.Edit;
+using MOJ.ProductManagement.Application.Features.Products.Queries.Get;
+using MOJ.ProductManagement.Application.Features.Products.Queries.GetProducts;
 
 namespace MOJ.ProductManagement.WebApi.Controllers
 {
@@ -45,6 +48,16 @@ namespace MOJ.ProductManagement.WebApi.Controllers
         public async Task<ActionResult<List<ProductDto>>> GetProducts([FromQuery] PaginatedRequest dto)
         {
             var result = await _mediator.Send(new GetProductsQuery(dto));
+            if (result.Succeeded)
+                return Ok(result);
+
+            return BadRequest(result);
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<ActionResult<bool>> DeleteProduct(int id)
+        {
+            var result = await _mediator.Send(new DeleteProductCommand(id));
             if (result.Succeeded)
                 return Ok(result);
 

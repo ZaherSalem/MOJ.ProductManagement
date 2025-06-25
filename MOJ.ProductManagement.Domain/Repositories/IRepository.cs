@@ -18,5 +18,7 @@ namespace MOJ.ProductManagement.Domain.Interfaces
         Task<List<T>> FindByAsync(Expression<Func<T, bool>> condition);
         Task<T> GetAsync(Expression<Func<T, bool>> condition);
         IQueryable<T> GetQueryable();
+
+        Task<bool> AnyAsync(Expression<Func<T, bool>> condition);
     }
 }

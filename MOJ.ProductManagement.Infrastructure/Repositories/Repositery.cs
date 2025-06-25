@@ -84,5 +84,10 @@ namespace MOJ.ProductManagement.Infrastructure.Repositories
         {
             return DbSet.AsQueryable<T>();
         }
+        
+        public async Task<bool> AnyAsync(Expression<Func<T, bool>> condition)
+        {
+            return await DbSet.AnyAsync(condition);
+        }
     }
 }
