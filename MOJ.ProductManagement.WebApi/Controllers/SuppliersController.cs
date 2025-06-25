@@ -24,7 +24,7 @@ namespace MOJ.ProductManagement.WebApi.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateSupplier(int id, [FromBody] SupplierDto updateDto)
+        public async Task<ActionResult<Result<SupplierDto>>> UpdateSupplier(int id, [FromBody] SupplierDto updateDto)
         {
             var result = await _mediator.Send(new UpdateSupplierCommand(id, updateDto));
             if (result.Succeeded)
@@ -34,7 +34,7 @@ namespace MOJ.ProductManagement.WebApi.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<SupplierDto>> GetSupplier(int id)
+        public async Task<ActionResult<Result<SupplierDto>>> GetSupplier(int id)
         {
             var result = await _mediator.Send(new GetSupplierQuery(id));
             if (result.Succeeded)
@@ -44,7 +44,7 @@ namespace MOJ.ProductManagement.WebApi.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<SupplierDto>>> GetSuppliers([FromQuery] PaginatedRequest dto)
+        public async Task<ActionResult<PaginatedResult<SupplierDto>>> GetSuppliers([FromQuery] PaginatedRequest dto)
         {
             var result = await _mediator.Send(new GetSuppliersQuery(dto));
             if (result.Succeeded)
@@ -54,7 +54,7 @@ namespace MOJ.ProductManagement.WebApi.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult<bool>> DeleteSupplier(int id)
+        public async Task<ActionResult<Result<bool>>> DeleteSupplier(int id)
         {
             var result = await _mediator.Send(new DeleteSupplierCommand(id));
             if (result.Succeeded)

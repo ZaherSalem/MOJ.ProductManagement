@@ -1,12 +1,12 @@
-﻿namespace MOJ.ProductManagement.Application.DTOs
+﻿using MOJ.ProductManagement.Application.DTOs.Product;
+using MOJ.ProductManagement.Application.DTOs.Supplier;
+
+namespace MOJ.ProductManagement.Application.DTOs
 { 
     public class ProductStatisticsDto
     {
-        public int ProductId { get; set; }
-        public string ProductName { get; set; }
-        public int TotalStock { get; set; }
-        public int TotalOrders { get; set; }
-        public decimal TotalValue { get; set; }
-        public bool NeedsReorder { get; set; }
+        public List<ProductDto>? ProductsToReorder { get; set; }
+        public SupplierDto? LargestSupplier { get; set; }
+        public ProductDto? ProductWithMinimumOrders { get; set; }
     }
 }

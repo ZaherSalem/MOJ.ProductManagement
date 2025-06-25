@@ -12,7 +12,7 @@ namespace MOJ.ProductManagement.Domain.Entities
         public int UnitsInStock { get; private set; }
         public int UnitsOnOrder { get; private set; }
 
-        public bool NeedsReorder() => UnitsInStock < ReorderLevel;
+        public bool NeedsReorder() => UnitsInStock <= ReorderLevel;
 
         public virtual Supplier Supplier { get; set; } // Navigation Property
         public virtual Lookup QuantityPerUnit { get; set; } // Navigation Property
