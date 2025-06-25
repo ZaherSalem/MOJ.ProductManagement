@@ -88,12 +88,12 @@ export class ProductListComponent implements OnInit {
     this.loadSuppliers();
   }
 
-  loadProducts(): void {
+  loadProducts(dto: IPaginatedRequest | null = null): void {
     this.loading = true;
     // Provide default pagination parameters
-    const paginatedRequest: IPaginatedRequest = {
+    const paginatedRequest: IPaginatedRequest = dto || {
       PageNumber: 1,
-      PageSize: 20,
+      PageSize: 10,
       SearchValue: '',
     };
     this.productApiService.getProducts(paginatedRequest).subscribe({
@@ -110,6 +110,16 @@ export class ProductListComponent implements OnInit {
         this.loading = false;
       },
     });
+  }
+
+  filterSuppliers() {
+    const search = this.searchTerm?.toLowerCase() || '';
+    const dto: IPaginatedRequest = {
+      PageNumber: 1,
+      PageSize: 20,
+      SearchValue: this.searchTerm,
+    };
+    this.loadProducts(dto);
   }
 
   loadSuppliers(): void {

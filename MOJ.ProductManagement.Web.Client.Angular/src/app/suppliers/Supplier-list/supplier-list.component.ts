@@ -50,24 +50,23 @@ export class SupplierListComponent implements OnInit {
     this.loadSuppliers();
   }
 
-  loadSuppliers(): void {
+  loadSuppliers(dto: IPaginatedRequest | null = null): void {
     this.loading = true;
-    const paginatedRequest: IPaginatedRequest = {
+    const paginatedRequest: IPaginatedRequest = dto || {
       PageNumber: 1,
-      PageSize: 20,
+      PageSize: 10,
       SearchValue: '',
     };
     this.apiService.getSuppliers(paginatedRequest).subscribe({
       next: (data: any) => {
-        this.suppliers = data.data;
-        this.filterSuppliers();
+        this.filteredSuppliers = data.data;
         this.loading = false;
       },
-      error: () => {
+      error: (error) => {
         this.messageService.add({
           severity: 'error',
           summary: 'Error',
-          detail: 'Failed to load Suppliers',
+          detail: error.error.messages[0] || 'Failed to load Suppliers',
         });
         this.loading = false;
       },
@@ -76,9 +75,12 @@ export class SupplierListComponent implements OnInit {
 
   filterSuppliers() {
     const search = this.searchTerm?.toLowerCase() || '';
-    this.filteredSuppliers = this.suppliers.filter((supplier) =>
-      supplier.name?.toLowerCase().includes(search)
-    );
+    const dto: IPaginatedRequest = {
+      PageNumber: 1,
+      PageSize: 20,
+      SearchValue: this.searchTerm,
+    };
+    this.loadSuppliers(dto);
   }
 
   editSupplier(supplier: Supplier) {
@@ -101,11 +103,11 @@ export class SupplierListComponent implements OnInit {
             });
             this.loadSuppliers();
           },
-          error: () => {
+          error: (error) => {
             this.messageService.add({
               severity: 'error',
               summary: 'Error',
-              detail: 'Failed to delete supplier',
+              detail: error.error.messages[0] || 'Failed to delete supplier',
             });
           },
         });
@@ -132,12 +134,5 @@ export class SupplierListComponent implements OnInit {
   onFormCancelled() {
     this.displayDialog = false;
     this.selectedSupplier = null;
-  }
-
-  onSearch(): void {
-    // Optionally implement filtering logic here, e.g.:
-    // this.filteredProducts = this.products.filter(product =>
-    //   product.name.toLowerCase().includes(this.searchTerm.toLowerCase())
-    // );
   }
 }
