@@ -9,7 +9,6 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
   return next(req).pipe(
     catchError((error: HttpErrorResponse) => {
       const errorMessage = getErrorMessage(error);
-      debugger;
       // Show error toast (only on client side)
       if (typeof window !== 'undefined') {
         messageService.add({
