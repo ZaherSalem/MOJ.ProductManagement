@@ -1,6 +1,8 @@
 # MOJ.ProductManagement
 Assignment - application ( Senior FullStack .NET Developer ) in MOJ
 
+![image](https://github.com/user-attachments/assets/b7d09141-3ab5-464c-92a0-355f5d4b5238)
+
 ## Assignment Tasks Breakdown
 
 ### 1. Solution Setup & Infrastructure (Est: 2h | Actual: 1h 30m)
